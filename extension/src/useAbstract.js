@@ -9,7 +9,7 @@ import {
 } from "@thirdweb-dev/sdk";
 const FACTORY_ADDRESS = "0x8d05DE3858a4d3Fdca1aC41b80481339a47a1eba";
 
-function useAbstract() {
+export default function useAbstract() {
   const [sdk, setSdk] = useState(null);
   const [smartWallet, setSmartWallet] = useState(null);
   const [personalWallet, setPersonalWallet] = useState(null);
