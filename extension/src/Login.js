@@ -20,6 +20,7 @@ import {
 } from '@ant-design/pro-components';
 import {connectToSmartWallet} from './services/wallet-service';
 import {connectToSmartWallet as connectToSmartWalletAbstract} from './abstract';
+import useAbstract from './useAbstract';
 import { ThirdwebSDK } from "@thirdweb-dev/react";
 import {Mumbai} from "@thirdweb-dev/chains";
 
@@ -28,15 +29,13 @@ function Login({setWallet, setSeedPhrase}) {
     const [username, setUsername] = useState(null);
     const [password, setPassword] = useState(null);
     const [processing, setProcessing] = useState(false);
+    const { connectToSmartWallet, executeERC20 } = useAbstract();
     const navigate = useNavigate();
     async function generateWallet() {
         setProcessing(true);
         const testMnemonic = connectToSmartWallet('viktor', 'someLongPassword123');
-        const sdk = new ThirdwebSDK(Mumbai, {
-            clientId: '3ff8b4d9deeff837a5923f887357e7ae',
-        });
         try {
-            const walletAddress = await connectToSmartWalletAbstract(sdk,username, password);
+            const walletAddress = await connectToSmartWalletAbstract(username, password);
             console.log('walletAdress', walletAddress);
             setWallet(walletAddress);
             setNewSeedPhrase('added');
