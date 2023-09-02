@@ -9,10 +9,10 @@ import {
 } from "@thirdweb-dev/sdk";
 const FACTORY_ADDRESS = "0x8d05DE3858a4d3Fdca1aC41b80481339a47a1eba";
 
-function useAbstract() {
-  const [sdk, setSdk] = useState(null);
-  const [smartWallet, setSmartWallet] = useState(null);
-  const [personalWallet, setPersonalWallet] = useState(null);
+export default function useAbstract() {
+  const [SDK, setSDK] = useState(null);
+  const [sWallet, setSWallet] = useState(null);
+  const [pWallet, setPWallet] = useState(null);
 
   async function getWalletAddressForUser(sdk, username) {
     const factory = await sdk.getContract(FACTORY_ADDRESS, FACTORY_ABI);
@@ -36,16 +36,16 @@ function useAbstract() {
     const sdk = new ThirdwebSDK(Mumbai, {
       clientId: "3ff8b4d9deeff837a5923f887357e7ae",
     });
-    setSdk(sdk);
+    setSDK(sdk);
     const smartWalletAddress = await getWalletAddressForUser(sdk, username);
     const isDeployed = await isContractDeployed(
       smartWalletAddress,
       sdk.getProvider(),
     );
     const smartWallet = createSmartWallet();
-    setSmartWallet(smartWallet);
+    setSWallet(smartWallet);
     const personalWallet = new LocalWallet();
-    setPersonalWallet(personalWallet);
+    setPWallet(personalWallet);
     if (isDeployed) {
       const contract = await sdk.getContract(smartWalletAddress);
       const metadata = await contract.metadata.get();
@@ -91,15 +91,15 @@ function useAbstract() {
   }
 
   async function executeERC20(contractAddress, method, args) {
-    const result = await smartWallet.execute(
+    const result = await sWallet.execute(
       await Transaction.fromContractInfo({
         contractAddress,
         ERC20_ABI,
-        provider: sdk.getProvider(),
-        signer: await personalWallet.getSigner(),
+        provider: SDK.getProvider(),
+        signer: await pWallet.getSigner(),
         method,
         args,
-        storage: sdk.storage,
+        storage: SDK.storage,
       }),
     );
     return result;
