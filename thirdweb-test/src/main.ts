@@ -1,17 +1,19 @@
 import 'dotenv/config'
 import { LocalWallet, SmartWallet, SmartWalletConfig } from '@thirdweb-dev/wallets'
-import { CeloAlfajoresTestnet } from '@thirdweb-dev/chains'
+import { CeloAlfajoresTestnet, Mumbai } from '@thirdweb-dev/chains'
 import { ThirdwebSDK, Transaction, isContractDeployed } from '@thirdweb-dev/sdk'
 import { ACCOUNT_ABI, FACTORY_ABI } from './abi'
 
-const FACTORY_ADDRESS = '0x701E6319B338bbFf4F08F1e238b893E5c8763080'
+const FACTORY_ADDRESS = '0x8d05DE3858a4d3Fdca1aC41b80481339a47a1eba'
+const ENDPOINT_ADDRESS = '0x5ff137d4b0fdcd49dca30c7cf57e578a026d2789'
 const USER = 'testuser'
 const PASSWORD = 'testpassword'
 
 async function thirdWebTest() {
-  const sdk = new ThirdwebSDK(CeloAlfajoresTestnet, {
+  const sdk = new ThirdwebSDK(Mumbai, {
     clientId: '3ff8b4d9deeff837a5923f887357e7ae',
   })
+
   await connectToSmartWallet(sdk, USER, PASSWORD)
   // You can then use this wallet to perform transactions via the SD
   console.log('Wallet address:', await sdk.wallet.getAddress())
@@ -24,10 +26,10 @@ async function getWalletAddressForUser(sdk: ThirdwebSDK, username: string): Prom
 }
 function createSmartWallet(): SmartWallet {
   const config: SmartWalletConfig = {
-    chain: CeloAlfajoresTestnet, // the chain where your smart wallet will be or is deployed
+    chain: Mumbai, // the chain where your smart wallet will be or is deployed
     factoryAddress: FACTORY_ADDRESS, // your own deployed account factory address
     clientId: '3ff8b4d9deeff837a5923f887357e7ae', // Use client id if using on the client side, get it from dashboard settings
-    secretKey: 'sXpkbwcbmjpniYMj0sMWF3cC0AgywzLCMmXrKlLJ921JQEMlA0_byGt6i2QTPLBTDqvdWeSQKrEt2f9k1Cn-oQ', // Use secret key if using on the server, get it from dashboard settings
+    //secretKey: 'sXpkbwcbmjpniYMj0sMWF3cC0AgywzLCMmXrKlLJ921JQEMlA0_byGt6i2QTPLBTDqvdWeSQKrEt2f9k1Cn-oQ', // Use secret key if using on the server, get it from dashboard settings
     gasless: true, // enable or disable gasless transactions
   }
 
@@ -38,7 +40,7 @@ function createSmartWallet(): SmartWallet {
 async function connectToSmartWallet(sdk: ThirdwebSDK, username: string, pwd: string) {
   const smartWalletAddress = await getWalletAddressForUser(sdk, username)
   const isDeployed = await isContractDeployed(smartWalletAddress, sdk.getProvider())
-
+  console.log('isDeployed: ', isDeployed)
   const smartWallet = createSmartWallet()
   const personalWallet = new LocalWallet()
 
@@ -64,6 +66,7 @@ async function connectToSmartWallet(sdk: ThirdwebSDK, username: string, pwd: str
     // CASE 1 - fresh start - create local wallet, encrypt, connect, call register on account with username + metadata
     // generate local wallet
     await personalWallet.generate()
+    console.log('Personal wallet address: ', await personalWallet.getAddress())
     // encrypt it
     const encryptedWallet = await personalWallet.export({
       strategy: 'encryptedJson',
@@ -80,8 +83,12 @@ async function connectToSmartWallet(sdk: ThirdwebSDK, username: string, pwd: str
       name: username,
       encryptedWallet,
     })
-
+    const fact = await smartWallet.getFactoryContract()
     // this will deploy the smart wallet and register the username
+    console.log(await smartWallet.getAddress())
+    console.log(sdk.getProvider())
+    // const result = await smartWallet.deploy()
+    // console.log('result: ', result)
     await smartWallet.execute(
       await Transaction.fromContractInfo({
         contractAddress: await smartWallet.getAddress(),
