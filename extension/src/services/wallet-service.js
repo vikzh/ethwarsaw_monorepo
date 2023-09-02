@@ -68,7 +68,8 @@ export async function connectToSmartWallet(username, pwd) {
             })
             await smartWallet.connect({
                 personalWallet,
-            })
+            });
+            localStorage.setItem('current_account', smartWalletAddress);
             console.log('read it bro old');
         } else {
             // CASE 1 - fresh start - create local wallet, encrypt, connect, call register on account with username + metadata
@@ -111,6 +112,7 @@ export async function connectToSmartWallet(username, pwd) {
             // console.log('did it bro new');
             localStorage.setItem(username, value[0]);
             localStorage.setItem(`${username}_wallet`, encryptedWallet);
+            localStorage.setItem('current_account', smartWalletAddress);
         }
     }
 }
