@@ -1,5 +1,5 @@
 import * as provider from 'eth-provider';
-const ethProvider = provider('wss://virulent-wild-sponge.celo-mainnet.discover.quiknode.pro/d2657c234c583ae001cacf7bcb7462a547e2f6b7/');
+const ethProvider = provider('https://rpc.ankr.com/celo');
 
 const funkcja = ethProvider.doSend;
 
