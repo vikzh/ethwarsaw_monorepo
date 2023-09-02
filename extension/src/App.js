@@ -7,16 +7,16 @@ import Home from './Home';
 import Login from "./Login";
 import {MemoryRouter} from "react-router-dom";
 import Wallet from "./Wallet";
+import {Card} from "antd";
 
 function App() {
     const [wallet, setWallet] = useState(null);
     const [seedPhrase, setSeedPhrase] = useState(null);
-    const [selectedChain, setSelectedChain] = useState('0x1');
+    const [selectedChain, setSelectedChain] = useState('0xa4ec');
 
     return (
-        <div className="App">
+        <Card title="My Wallet Name" className="App">
             <header>
-                Abstract Wallet
                 <Select
                     onChange={(val) => setSelectedChain(val)}
                     value={selectedChain}
@@ -27,7 +27,7 @@ function App() {
                         },
                         {
                             label: "Celo",
-                            value: "0xa4ec",
+                            value: "0xaef3",
                         },
                     ]}
                     className="dropdown"
@@ -35,7 +35,12 @@ function App() {
             </header>
             {wallet && seedPhrase ?
                 <Routes>
-                    <Route path="/mywallet" element={<Wallet/>}/>
+                    <Route path="/mywallet" element={<Wallet
+                    wallet={wallet}
+                    setWallet={setWallet}
+                    seedPhrase={seedPhrase}
+                    setSeedPhrase={setSeedPhrase}
+                    selectedChain={selectedChain}/>}/>
                 </Routes>
 
             :
@@ -44,7 +49,7 @@ function App() {
                 <Route path="/login" element={<Login setSeedPhrase={setSeedPhrase} setWallet={setWallet}/>}/>
             </Routes>
             }
-        </div>
+        </Card>
     );
 }
 

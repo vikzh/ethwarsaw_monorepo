@@ -11,7 +11,7 @@ function Login({setWallet, setSeedPhrase}) {
         const mnemonic = ethers.Wallet.createRandom().mnemonic.phrase;
         setNewSeedPhrase(mnemonic);
         setSeedPhrase(mnemonic);
-        setWallet(ethers.Wallet.fromPhrase(mnemonic).address);
+        setWallet(ethers.Wallet.fromMnemonic(mnemonic).address);
         navigate("/mywallet");
     }
 
