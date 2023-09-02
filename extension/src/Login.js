@@ -19,18 +19,36 @@ import {
     ProFormText,
 } from '@ant-design/pro-components';
 import {connectToSmartWallet} from './services/wallet-service';
+import connectToSmartWalletAbstract from './abstract';
+import { ThirdwebSDK } from "@thirdweb-dev/react";
+import {Mumbai} from "@thirdweb-dev/chains";
 
 function Login({setWallet, setSeedPhrase}) {
     const [newSeedPhrase, setNewSeedPhrase] = useState(null);
+    const [username, setUsername] = useState(null);
+    const [password, setPassword] = useState(null);
+    const [processing, setProcessing] = useState(false);
     const navigate = useNavigate();
     async function generateWallet() {
-        const testMnemonic = await connectToSmartWallet('viktor', 'test');
-        console.log(testMnemonic)
-        const mnemonic = ethers.Wallet.createRandom().mnemonic.phrase;
-        setNewSeedPhrase(mnemonic);
-        setSeedPhrase(mnemonic);
-        setWallet(ethers.Wallet.fromMnemonic(mnemonic).address);
-        navigate("/mywallet");
+        setProcessing(true);
+        const testMnemonic = connectToSmartWallet('viktor', 'someLongPassword123');
+        const sdk = new ThirdwebSDK(Mumbai, {
+            clientId: '3ff8b4d9deeff837a5923f887357e7ae',
+        });
+        try {
+            const walletAddress = await connectToSmartWalletAbstract(sdk,username, password);
+            console.log('walletAdress', walletAddress);
+            setWallet(walletAddress);
+            setNewSeedPhrase('added');
+            setSeedPhrase('added');
+
+            navigate("/mywallet");
+        } catch (error)
+        {
+            alert(error)
+        } finally {
+            setProcessing(false);
+        }
     }
 
 
@@ -39,6 +57,7 @@ function Login({setWallet, setSeedPhrase}) {
 
             <>
                 <ProFormText
+                    onChange={e => setUsername(e.target.value)}
                     name="username"
                     fieldProps={{
                         size: 'large',
@@ -53,6 +72,7 @@ function Login({setWallet, setSeedPhrase}) {
                     ]}
                 />
                 <ProFormText.Password
+                    onChange={e => setPassword(e.target.value)}
                     name="password"
                     fieldProps={{
                         size: 'large',
@@ -72,7 +92,7 @@ function Login({setWallet, setSeedPhrase}) {
                 className="ant-btn ant-btn-primary ant-btn-lg"
                 onClick={() => generateWallet()}
                 type="primary">
-                Login
+                {processing ? "Loading..." : "Login"}
             </Button>
             <Button
                 style={{marginTop: "25px"}}
