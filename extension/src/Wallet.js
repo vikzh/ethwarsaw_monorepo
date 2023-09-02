@@ -1,9 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {
-    Divider,
     Tooltip,
     List,
-    Avatar,
     Spin,
     Tabs,
     Input,
@@ -244,10 +242,10 @@ function WalletView({
     return (
         <>
             <div className="content ">
-                <div style={{display: "flex", alignItems: "end",justifyContent: "end"}}>
+                <div style={{display: "flex", alignItems: "end", justifyContent: "end"}}>
                     <Statistic title="Wallet" value={wallet.slice(0, 20) + '...'}/>
                     <Button style={{marginBottom: "3px"}} className="logoutButton" type="text" onClick={logout}>
-                        <LogoutOutlined />
+                        <LogoutOutlined/>
                     </Button>
                 </div>
                 {fetching ? (

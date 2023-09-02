@@ -1,16 +1,13 @@
-import logo from './logo.svg';
 import './App.css';
 import {useEffect, useState} from 'react';
-import {Select, Space} from 'antd';
+import {Select} from 'antd';
 import {Routes, Route} from 'react-router-dom';
 import Home from './Home';
 import Login from "./Login";
-import {MemoryRouter} from "react-router-dom";
 import Wallet from "./Wallet";
 import {Card} from "antd";
-import {WalletOutlined} from "@ant-design/icons";
-import { Col, Row, Statistic } from 'antd';
-import { Divider } from 'antd';
+import {Col, Row} from 'antd';
+import {Divider} from 'antd';
 import {connectToSmartWallet} from "./services/wallet-service";
 
 
@@ -58,7 +55,7 @@ function App() {
                         ></Select>
                     </Col>
                 </Row>
-                <Divider />
+                <Divider/>
             </header>
             {wallet && seedPhrase ?
                 <Routes>
@@ -73,7 +70,8 @@ function App() {
                 :
                 <Routes>
                     <Route path="/" element={<Home/>}/>
-                    <Route path="/login" element={<Login className="loginButton" setSeedPhrase={setSeedPhrase} setWallet={setWallet}/>}/>
+                    <Route path="/login" element={<Login className="loginButton" setSeedPhrase={setSeedPhrase}
+                                                         setWallet={setWallet}/>}/>
                 </Routes>
             }
         </Card>
