@@ -1,18 +1,22 @@
 import logo from './logo.svg';
 import './App.css';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Select} from 'antd';
 import {Routes, Route} from 'react-router-dom';
 import Home from './Home';
 import Login from "./Login";
 import {MemoryRouter} from "react-router-dom";
 import Wallet from "./Wallet";
-
+import {getAccounts} from "./services/wallet-service";
 function App() {
     const [wallet, setWallet] = useState(null);
     const [seedPhrase, setSeedPhrase] = useState(null);
     const [selectedChain, setSelectedChain] = useState('0x1');
-
+    useEffect(() => {
+        getAccounts().then((accounts) => {
+            console.log('zwrotka', accounts);
+        });
+    }, []);
     return (
         <div className="App">
             <header>
