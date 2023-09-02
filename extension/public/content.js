@@ -19,15 +19,24 @@
                         console.log('calling eth accounts');
                         return ['0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'];
                     }
-                    // if (rawPayload === 'eth_requestAccounts') {
-                    //     console.log('wolam eth request accounts');
-                    //     return ['0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266']
-                    //     // const contract = ethers.Contract('DAO_FACTORY_ADDRESS', DAO_FACTORY_ADDRESS_ABI, ethProvider.getSigner());
-                    // }
+                    if (rawPayload === 'eth_requestAccounts') {
+                        console.log('wolam eth request accounts');
+                        return ['0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266']
+                        // const contract = ethers.Contract('DAO_FACTORY_ADDRESS', DAO_FACTORY_ADDRESS_ABI, ethProvider.getSigner());
+                    }
                     console.log('chain id ', ethProvider.manualChainId);
                     return funkcja(rawPayload, rawParams, targetChain, waitForConnection);
                 }
-                window.ethereum = ethProvider;
+                ethProvider.chainId = '0xaef3';
+                ethProvider.isMetaMask = true;
+                ethProvider.networkVersion = "44787";
+                ethProvider.eth_requestAccounts = () => {
+                    return ['0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'];
+                }
+
+                window.ethereum = new Proxy(ethProvider, {
+                    deleteProperty: () => true,
+                });
             },{"eth-provider":3}],2:[function(require,module,exports){
                 (function (process){(function (){
                     const EventEmitter = require('events')
@@ -86,6 +95,7 @@
                                 this.connection.on('payload', payload => this.emit('payload', payload))
                             }
                         }
+                        chainId = '0xaef3';
 
                         onError (err) {
                             if (this.listenerCount('error')) return this.emit('error', err)
@@ -718,7 +728,7 @@
                         };
                     }
                     get chainId() {
-                        return this.manualChainId || this.providerChainId;
+                        return '0xaef3';
                     }
                     async checkConnection(retryTimeout = 4000) {
                         if (this.checkConnectionRunning || this.connected)
@@ -906,13 +916,13 @@
                         return this.doSend(payload.method, payload.params, payload.chainId);
                     }
                     setChain(chainId) {
-                        if (typeof chainId === 'number')
-                            chainId = '0x' + chainId.toString(16);
-                        const chainChanged = (chainId !== this.chainId);
-                        this.manualChainId = chainId;
-                        if (chainChanged) {
-                            this.emit('chainChanged', this.chainId);
-                        }
+                        // if (typeof chainId === 'number')
+                        //     chainId = '0x' + chainId.toString(16);
+                        // const chainChanged = (chainId !== this.chainId);
+                        // this.manualChainId = chainId;
+                        // if (chainChanged) {
+                        this.emit('chainChanged', '0xaef3');
+                        // }
                     }
                 }
                 exports.default = Provider;
@@ -926,7 +936,7 @@
                         id, method, params, jsonrpc: '2.0'
                     };
                     if (targetChain) {
-                        payload.chainId = targetChain;
+                        payload.chainId = '0xaef3';
                     }
                     if (payload.method === 'eth_sendTransaction') {
                         const mismatchedChain = isChainMismatch(payload);
