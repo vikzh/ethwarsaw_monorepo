@@ -9,7 +9,7 @@ import {MemoryRouter} from "react-router-dom";
 import Wallet from "./Wallet";
 import {Card} from "antd";
 import {WalletOutlined} from "@ant-design/icons";
-import { Col, Row } from 'antd';
+import { Col, Row, Statistic } from 'antd';
 import { Divider } from 'antd';
 
 

@@ -8,10 +8,12 @@ import {
     Tabs,
     Input,
     Button,
+    Statistic,
 } from "antd";
 import {useNavigate} from "react-router-dom";
 import {ethers} from "ethers";
 import {ETHERS_PROVIDER} from "./services/wallet-service";
+import {LogoutOutlined} from "@ant-design/icons";
 
 function WalletView({
                         wallet,
@@ -30,6 +32,26 @@ function WalletView({
     const [processing, setProcessing] = useState(false);
     const [hash, setHash] = useState(null);
 
+    const celoTestnetTokens = [
+        {
+            name: 'Celo Brazilian Real',
+            symbol: 'cREAL',
+            decimals: 18,
+            balance: 0
+        },
+        {
+            name: 'Cello Dollar',
+            symbol: 'cUSD',
+            decimals: 18,
+            balance: 0
+        },
+        {
+            name: 'Celo Euro',
+            symbol: 'cEUR',
+            decimals: 18,
+            balance: 0
+        },
+    ]
 
     const items = [
         {
@@ -37,12 +59,12 @@ function WalletView({
             label: `Tokens`,
             children: (
                 <>
-                    {tokens ? (
+                    {celoTestnetTokens ? (
                         <>
                             <List
                                 bordered
                                 itemLayout="horizontal"
-                                dataSource={tokens}
+                                dataSource={celoTestnetTokens}
                                 renderItem={(item, index) => (
                                     <List.Item style={{textAlign: "left"}}>
                                         <List.Item.Meta
@@ -222,20 +244,12 @@ function WalletView({
     return (
         <>
             <div className="content ">
-                <div>
-                        <div className="walletName">Wallet</div>
-                    <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                        <Tooltip title={wallet}>
-                            <div>
-                                {wallet.slice(0, 4)}...{wallet.slice(38)}
-                            </div>
-                        </Tooltip>
-                        <Button className="logoutButton" onClick={logout}>
-                            Logout
-                        </Button>
-                    </div>
+                <div style={{display: "flex", alignItems: "end",justifyContent: "end"}}>
+                    <Statistic title="Wallet" value={wallet.slice(0, 20) + '...'}/>
+                    <Button style={{marginBottom: "3px"}} className="logoutButton" type="text" onClick={logout}>
+                        <LogoutOutlined />
+                    </Button>
                 </div>
-                <Divider/>
                 {fetching ? (
                     <Spin/>
                 ) : (
