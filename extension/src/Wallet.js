@@ -20,8 +20,24 @@ function WalletView({
                         setSeedPhrase,
                         selectedChain,
                     }) {
+    const favoriteTokens = [
+        {
+            name: 'Dai Stablecoin',
+            symbol: 'DAI',
+            decimals: 18,
+            address: '0xC1E1C0Ab645Bd3C3156b20953784992013FDa98d',
+            balance: 0
+        },
+        {
+            name: 'USD Coin',
+            symbol: 'USDC',
+            decimals: 18,
+            address: '0xF493Af87835D243058103006e829c72f3d34b891',
+            balance: 0
+        }
+    ];
+
     const navigate = useNavigate();
-    const [tokens, setTokens] = useState(null);
     const [nfts, setNfts] = useState(null);
     const [balance, setBalance] = useState(0);
     const [fetching, setFetching] = useState(true);
@@ -29,27 +45,8 @@ function WalletView({
     const [sendToAddress, setSendToAddress] = useState(null);
     const [processing, setProcessing] = useState(false);
     const [hash, setHash] = useState(null);
-
-    const celoTestnetTokens = [
-        {
-            name: 'Celo Brazilian Real',
-            symbol: 'cREAL',
-            decimals: 18,
-            balance: 0
-        },
-        {
-            name: 'Cello Dollar',
-            symbol: 'cUSD',
-            decimals: 18,
-            balance: 0
-        },
-        {
-            name: 'Celo Euro',
-            symbol: 'cEUR',
-            decimals: 18,
-            balance: 0
-        },
-    ]
+    const [activeCoin, setActiveCoin] = useState(favoriteTokens[0])
+    const [activeTab, setActiveTab] = useState("3");
 
     const items = [
         {
@@ -57,14 +54,16 @@ function WalletView({
             label: `Tokens`,
             children: (
                 <>
-                    {celoTestnetTokens ? (
+                    {favoriteTokens ? (
                         <>
                             <List
                                 bordered
                                 itemLayout="horizontal"
-                                dataSource={celoTestnetTokens}
+                                dataSource={favoriteTokens}
                                 renderItem={(item, index) => (
-                                    <List.Item style={{textAlign: "left"}}>
+                                    <List.Item
+                                        actions={[<a key="list-loadmore-edit" onClick={() => {setActiveCoin(favoriteTokens[index]);setActiveTab("1")}}>Send</a>]}
+                                        style={{textAlign: "left"}}>
                                         <List.Item.Meta
                                             title={item.symbol}
                                             description={item.name}
@@ -123,9 +122,9 @@ function WalletView({
             label: `Transfer`,
             children: (
                 <>
-                    <h3>Native Balance </h3>
+                    <h3>{activeCoin.name} Balance</h3>
                     <h1>
-                        {balance.toString()} Celo
+                        {balance.toString()} {activeCoin.symbol}
                     </h1>
                     <div className="sendRow">
                         <p style={{width: "90px", textAlign: "left"}}> To:</p>
@@ -218,7 +217,6 @@ function WalletView({
         setSeedPhrase(null);
         setWallet(null);
         setNfts(null);
-        setTokens(null);
         setBalance(0);
         navigate("/");
     }
@@ -226,7 +224,6 @@ function WalletView({
     useEffect(() => {
         if (!wallet || !selectedChain) return;
         setNfts(null);
-        setTokens(null);
         setBalance(0);
         getAccountTokens();
     }, []);
@@ -234,7 +231,6 @@ function WalletView({
     useEffect(() => {
         if (!wallet) return;
         setNfts(null);
-        setTokens(null);
         setBalance(0);
         getAccountTokens();
     }, [selectedChain]);
@@ -251,7 +247,7 @@ function WalletView({
                 {fetching ? (
                     <Spin/>
                 ) : (
-                    <Tabs defaultActiveKey="1" items={items} className="walletView"/>
+                    <Tabs defaultActiveKey="1" onTabClick={(key) => setActiveTab(key)} activeKey={activeTab} items={items} className="walletView"/>
                 )}
             </div>
         </>
