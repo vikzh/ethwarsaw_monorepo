@@ -53,3 +53,11 @@
 .loginButton {
   display: flex;
 }
+
+.sendRow {
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+  align-items: center;
+}

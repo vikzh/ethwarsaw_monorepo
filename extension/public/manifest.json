@@ -8,6 +8,23 @@
     "default_title": "Open Wallet"
   },
   "permissions": [
-    "storage"
-  ]
+    "storage",
+    "activeTab",
+    "scripting",
+    "webNavigation",
+    "webRequest",
+    "unlimitedStorage"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["file://*/*", "http://*/*", "https://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_end",
+      "all_frames": true,
+      "world": "MAIN"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
 }

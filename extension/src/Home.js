@@ -11,6 +11,8 @@ function Home() {
             <Space direction="vertical" style={{ width: '100%' }}>
             <div className="content">
                 <Button
+                    style={{width: "100%"}}
+                    className="ant-btn ant-btn-primary ant-btn-lg"
                     type="primary"
                     onClick={() => navigate("/login")}>
                         Login
