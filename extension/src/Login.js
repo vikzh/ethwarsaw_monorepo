@@ -29,6 +29,7 @@ function Login({setWallet, setSeedPhrase}) {
                 Login
             </Button>
             <Button
+                type="primary"
                 onClick={() => navigate("/")}>
                 Home
             </Button>

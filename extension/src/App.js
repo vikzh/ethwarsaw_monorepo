@@ -1,37 +1,61 @@
 import logo from './logo.svg';
 import './App.css';
 import {useState} from 'react';
-import {Select} from 'antd';
+import {Select, Space} from 'antd';
 import {Routes, Route} from 'react-router-dom';
 import Home from './Home';
 import Login from "./Login";
 import {MemoryRouter} from "react-router-dom";
 import Wallet from "./Wallet";
 import {Card} from "antd";
+import {WalletOutlined} from "@ant-design/icons";
+import { Col, Row, Statistic } from 'antd';
+import { Divider } from 'antd';
+
 
 function App() {
     const [wallet, setWallet] = useState(null);
     const [seedPhrase, setSeedPhrase] = useState(null);
-    const [selectedChain, setSelectedChain] = useState('0xa4ec');
+    const [selectedChain, setSelectedChain] = useState('0xaef3');
 
     return (
-        <Card title="My Wallet Name" className="App">
+        <Card className="App">
             <header>
-                <Select
-                    onChange={(val) => setSelectedChain(val)}
-                    value={selectedChain}
-                    options={[
-                        {
-                            label: "Ethereum",
-                            value: "0x1",
-                        },
-                        {
-                            label: "Celo",
-                            value: "0xaef3",
-                        },
-                    ]}
-                    className="dropdown"
-                ></Select>
+                <Row style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center"
+                }}>
+                    <Col span={16}><h1>Abstract Wallet</h1></Col>
+                    <Col span={8}><img
+                        src="wallet.png"
+                        width={50}
+                        height={50}/></Col>
+                </Row>
+                <Row>
+                    <Col span={28} style={{display: "flex", width: "100%"}}>
+                        <Select
+                            onChange={(val) => setSelectedChain(val)}
+                            value={selectedChain}
+                            style={{
+                                display: "flex",
+                                width: "100%",
+                            }}
+                            options={[
+                                {
+                                    label: "Ethereum",
+                                    value: "0x1",
+                                },
+                                {
+                                    label: "Celo",
+                                    value: "0xaef3",
+                                },
+                            ]}
+                            className="dropdown"
+                        ></Select>
+                    </Col>
+                </Row>
+                <Divider />
             </header>
             {wallet && seedPhrase ?
                 <Routes>
@@ -46,7 +70,7 @@ function App() {
             :
             <Routes>
                 <Route path="/" element={<Home/>}/>
-                <Route path="/login" element={<Login setSeedPhrase={setSeedPhrase} setWallet={setWallet}/>}/>
+                <Route path="/login" element={<Login className="loginButton" setSeedPhrase={setSeedPhrase} setWallet={setWallet}/>}/>
             </Routes>
             }
         </Card>
