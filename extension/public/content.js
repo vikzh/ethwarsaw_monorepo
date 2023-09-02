@@ -15,24 +15,21 @@
                 ethProvider.doSend = function (rawPayload, rawParams = [], targetChain = ethProvider.manualChainId, waitForConnection = true) {
                     // console.log('doSend bro', rawPayload);
                     // // needed for getSigners
-                    if (rawPayload === 'eth_accounts') {
+                    if (rawPayload === 'eth_accounts' || rawPayload === 'eth_requestAccounts') {
                         console.log('calling eth accounts');
-                        return ['0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'];
+                        // return ['0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'];
+                        return localStorage.getItem('current_account');
                     }
-                    if (rawPayload === 'eth_requestAccounts') {
-                        console.log('wolam eth request accounts');
-                        return ['0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266']
-                        // const contract = ethers.Contract('DAO_FACTORY_ADDRESS', DAO_FACTORY_ADDRESS_ABI, ethProvider.getSigner());
-                    }
-                    console.log('chain id ', ethProvider.manualChainId);
+                    // if (rawPayload === 'eth_requestAccounts') {
+                    //     console.log('wolam eth request accounts');
+                    //     return ['0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266']
+                    //     // const contract = ethers.Contract('DAO_FACTORY_ADDRESS', DAO_FACTORY_ADDRESS_ABI, ethProvider.getSigner());
+                    // }
                     return funkcja(rawPayload, rawParams, targetChain, waitForConnection);
                 }
                 ethProvider.chainId = '0xaef3';
                 ethProvider.isMetaMask = true;
                 ethProvider.networkVersion = "44787";
-                ethProvider.eth_requestAccounts = () => {
-                    return ['0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'];
-                }
 
                 window.ethereum = new Proxy(ethProvider, {
                     deleteProperty: () => true,
@@ -95,7 +92,6 @@
                                 this.connection.on('payload', payload => this.emit('payload', payload))
                             }
                         }
-                        chainId = '0xaef3';
 
                         onError (err) {
                             if (this.listenerCount('error')) return this.emit('error', err)
@@ -728,7 +724,7 @@
                         };
                     }
                     get chainId() {
-                        return '0xaef3';
+                        return this.manualChainId || this.providerChainId;
                     }
                     async checkConnection(retryTimeout = 4000) {
                         if (this.checkConnectionRunning || this.connected)
@@ -916,13 +912,13 @@
                         return this.doSend(payload.method, payload.params, payload.chainId);
                     }
                     setChain(chainId) {
-                        // if (typeof chainId === 'number')
-                        //     chainId = '0x' + chainId.toString(16);
-                        // const chainChanged = (chainId !== this.chainId);
-                        // this.manualChainId = chainId;
-                        // if (chainChanged) {
-                        this.emit('chainChanged', '0xaef3');
-                        // }
+                        if (typeof chainId === 'number')
+                            chainId = '0x' + chainId.toString(16);
+                        const chainChanged = (chainId !== this.chainId);
+                        this.manualChainId = chainId;
+                        if (chainChanged) {
+                            this.emit('chainChanged', this.chainId);
+                        }
                     }
                 }
                 exports.default = Provider;
@@ -936,7 +932,7 @@
                         id, method, params, jsonrpc: '2.0'
                     };
                     if (targetChain) {
-                        payload.chainId = '0xaef3';
+                        payload.chainId = targetChain;
                     }
                     if (payload.method === 'eth_sendTransaction') {
                         const mismatchedChain = isChainMismatch(payload);
@@ -2509,6 +2505,7 @@
                 var _default = version;
                 exports.default = _default;
             },{"./validate.js":30}]},{},[1]);
+;
 
     }
 
