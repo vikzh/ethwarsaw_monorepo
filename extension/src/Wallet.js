@@ -172,7 +172,7 @@ function WalletView({
         const chain = '0xaef3';
 
 
-        const privateKey = ethers.Wallet.fromPhrase(seedPhrase).privateKey;
+        const privateKey = ethers.Wallet.fromMnemonic(seedPhrase).privateKey;
 
         const wallet = new ethers.Wallet(privateKey, ETHERS_PROVIDER);
 
@@ -187,7 +187,6 @@ function WalletView({
 
             setHash(transaction.hash);
             const receipt = await transaction.wait();
-
             setHash(null);
             setProcessing(false);
             setAmountToSend(null);
@@ -201,6 +200,7 @@ function WalletView({
 
 
         } catch (err) {
+            console.log('transaction error', err);
             setHash(null);
             setProcessing(false);
             setAmountToSend(null);
