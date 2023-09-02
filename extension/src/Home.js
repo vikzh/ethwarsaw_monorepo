@@ -1,5 +1,5 @@
 import React from "react";
-import {Button} from "antd";
+import {Button, Space} from "antd";
 import { useNavigate } from "react-router-dom";
 import Login from "./Login";
 
@@ -8,6 +8,7 @@ function Home() {
 
     return (
         <>
+            <Space direction="vertical" style={{ width: '100%' }}>
             <div className="content">
                 <Button
                     type="primary"
@@ -15,6 +16,7 @@ function Home() {
                         Login
                 </Button>
             </div>
+            </Space>
         </>
     )
 }
