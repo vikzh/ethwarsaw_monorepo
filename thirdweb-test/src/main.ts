@@ -2,10 +2,12 @@ import 'dotenv/config'
 import { LocalWallet, SmartWallet, SmartWalletConfig } from '@thirdweb-dev/wallets'
 import { CeloAlfajoresTestnet, Mumbai } from '@thirdweb-dev/chains'
 import { ThirdwebSDK, Transaction, isContractDeployed } from '@thirdweb-dev/sdk'
-import { ACCOUNT_ABI, FACTORY_ABI } from './abi'
+import { ACCOUNT_ABI, ERC20_ABI, FACTORY_ABI } from './abi'
+import { ContractInterface } from 'ethers'
 
 const FACTORY_ADDRESS = '0x8d05DE3858a4d3Fdca1aC41b80481339a47a1eba'
 const ENDPOINT_ADDRESS = '0x5ff137d4b0fdcd49dca30c7cf57e578a026d2789'
+const USDC_ADDRESS = '0xF493Af87835D243058103006e829c72f3d34b891'
 const USER = 'testuser'
 const PASSWORD = 'testpassword'
 
@@ -101,6 +103,46 @@ async function connectToSmartWallet(sdk: ThirdwebSDK, username: string, pwd: str
       }),
     )
   }
+
+  const result = await smartWallet.execute(
+    await Transaction.fromContractInfo({
+      contractAddress: USDC_ADDRESS,
+      contractAbi: ERC20_ABI,
+      provider: sdk.getProvider(),
+      signer: await personalWallet.getSigner(),
+      method: 'approve',
+      args: [ENDPOINT_ADDRESS, '100000'],
+      storage: sdk.storage,
+    }),
+  )
+  console.log('smart wallet address ' + (await smartWallet.getAddress()))
+  console.log('result approve: ', result)
+  // approve erc20 spend
+  // const erc20 = await sdk.getContract(USDC_ADDRESS)
+  // const data = erc20.encoder.encode('approve', [ENDPOINT_ADDRESS, '100000']);
+}
+
+export async function execute(
+  sdk: ThirdwebSDK,
+  smartWallet: SmartWallet,
+  personalWallet: LocalWallet,
+  contractAddress: string,
+  contractAbi: ContractInterface,
+  method: string,
+  args: any[],
+) {
+  const result = await smartWallet.execute(
+    await Transaction.fromContractInfo({
+      contractAddress,
+      contractAbi,
+      provider: sdk.getProvider(),
+      signer: await personalWallet.getSigner(),
+      method,
+      args,
+      storage: sdk.storage,
+    }),
+  )
+  return result
 }
 
 async function main() {
