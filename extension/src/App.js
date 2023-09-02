@@ -3,6 +3,9 @@ import './App.css';
 import {useState} from 'react';
 import {Select} from 'antd';
 import { Routes, Route } from 'react-router-dom';
+import Home from './Home';
+import Login from "./Login";
+import { MemoryRouter } from "react-router-dom";
 
 function App() {
   const [selectedChain, setSelectedChain] = useState('0x1');
@@ -27,6 +30,10 @@ function App() {
               className="dropdown"
           ></Select>
       </header>
+        <Routes>
+            <Route path="/" element={<Home/>}/>
+            <Route path="/login" element={<Login/>}/>
+        </Routes>
     </div>
   );
 }
