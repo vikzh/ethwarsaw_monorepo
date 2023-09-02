@@ -105,7 +105,7 @@ function WalletView({
                 <>
                     <h3>Native Balance </h3>
                     <h1>
-                        100 ETH
+                        {balance.toString()} Celo
                     </h1>
                     <div className="sendRow">
                         <p style={{width: "90px", textAlign: "left"}}> To:</p>
@@ -188,6 +188,9 @@ function WalletView({
 
     async function getAccountTokens() {
         setFetching(true);
+        const balance = await ETHERS_PROVIDER.getBalance(wallet);
+        setBalance(balance);
+        console.log('balance', balance);
         setFetching(false);
     }
 
