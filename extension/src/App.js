@@ -2,40 +2,50 @@ import logo from './logo.svg';
 import './App.css';
 import {useState} from 'react';
 import {Select} from 'antd';
-import { Routes, Route } from 'react-router-dom';
+import {Routes, Route} from 'react-router-dom';
 import Home from './Home';
 import Login from "./Login";
-import { MemoryRouter } from "react-router-dom";
+import {MemoryRouter} from "react-router-dom";
+import Wallet from "./Wallet";
 
 function App() {
-  const [selectedChain, setSelectedChain] = useState('0x1');
+    const [wallet, setWallet] = useState(null);
+    const [seedPhrase, setSeedPhrase] = useState(null);
+    const [selectedChain, setSelectedChain] = useState('0x1');
 
-  return (
-    <div className="App">
-      <header>
-          Abstract Wallet
-          <Select
-              onChange={(val) => setSelectedChain(val)}
-              value={selectedChain}
-              options={[
-                  {
-                      label: "Ethereum",
-                      value: "0x1",
-                  },
-                  {
-                      label: "Celo",
-                      value: "0xa4ec",
-                  },
-              ]}
-              className="dropdown"
-          ></Select>
-      </header>
-        <Routes>
-            <Route path="/" element={<Home/>}/>
-            <Route path="/login" element={<Login/>}/>
-        </Routes>
-    </div>
-  );
+    return (
+        <div className="App">
+            <header>
+                Abstract Wallet
+                <Select
+                    onChange={(val) => setSelectedChain(val)}
+                    value={selectedChain}
+                    options={[
+                        {
+                            label: "Ethereum",
+                            value: "0x1",
+                        },
+                        {
+                            label: "Celo",
+                            value: "0xa4ec",
+                        },
+                    ]}
+                    className="dropdown"
+                ></Select>
+            </header>
+            {wallet && seedPhrase ?
+                <Routes>
+                    <Route path="/mywallet" element={<Wallet/>}/>
+                </Routes>
+
+            :
+            <Routes>
+                <Route path="/" element={<Home/>}/>
+                <Route path="/login" element={<Login setSeedPhrase={setSeedPhrase} setWallet={setWallet}/>}/>
+            </Routes>
+            }
+        </div>
+    );
 }
 
 export default App;

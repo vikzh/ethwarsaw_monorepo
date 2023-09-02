@@ -1,7 +1,20 @@
 import React from "react";
 import {Button} from "antd";
+import {ethers} from "ethers";
+import {useNavigate} from "react-router-dom";
+import {useState} from "react";
 
-function Login() {
+function Login({setWallet, setSeedPhrase}) {
+    const [newSeedPhrase, setNewSeedPhrase] = useState(null);
+    const navigate = useNavigate();
+    function generateWallet() {
+        const mnemonic = ethers.Wallet.createRandom().mnemonic.phrase;
+        setNewSeedPhrase(mnemonic);
+        setSeedPhrase(mnemonic);
+        setWallet(ethers.Wallet.fromPhrase(mnemonic).address);
+        navigate("/mywallet");
+    }
+
 
     return (
         <>
@@ -9,6 +22,12 @@ function Login() {
                 Login page
             </div>
 
+            <input/>
+            <Button
+                onClick={() => generateWallet()}
+                type="primary">
+                Login
+            </Button>
             <Button
                 onClick={() => navigate("/")}>
                 Home
