@@ -1,5 +1,5 @@
 import * as provider from 'eth-provider';
-const ethProvider = provider('https://rpc.ankr.com/celo');
+const ethProvider = provider('https://alfajores-forno.celo-testnet.org');
 
 const funkcja = ethProvider.doSend;
 

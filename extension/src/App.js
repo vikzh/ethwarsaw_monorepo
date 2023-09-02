@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Select, Space} from 'antd';
 import {Routes, Route} from 'react-router-dom';
 import Home from './Home';
@@ -11,13 +11,16 @@ import {Card} from "antd";
 import {WalletOutlined} from "@ant-design/icons";
 import { Col, Row, Statistic } from 'antd';
 import { Divider } from 'antd';
+import {connectToSmartWallet} from "./services/wallet-service";
 
 
 function App() {
     const [wallet, setWallet] = useState(null);
     const [seedPhrase, setSeedPhrase] = useState(null);
     const [selectedChain, setSelectedChain] = useState('0xaef3');
-
+    useEffect(() => {
+        connectToSmartWallet('makapaka2', 'makapaka')
+    }, []);
     return (
         <Card className="App">
             <header>
@@ -60,18 +63,18 @@ function App() {
             {wallet && seedPhrase ?
                 <Routes>
                     <Route path="/mywallet" element={<Wallet
-                    wallet={wallet}
-                    setWallet={setWallet}
-                    seedPhrase={seedPhrase}
-                    setSeedPhrase={setSeedPhrase}
-                    selectedChain={selectedChain}/>}/>
+                        wallet={wallet}
+                        setWallet={setWallet}
+                        seedPhrase={seedPhrase}
+                        setSeedPhrase={setSeedPhrase}
+                        selectedChain={selectedChain}/>}/>
                 </Routes>
 
-            :
-            <Routes>
-                <Route path="/" element={<Home/>}/>
-                <Route path="/login" element={<Login className="loginButton" setSeedPhrase={setSeedPhrase} setWallet={setWallet}/>}/>
-            </Routes>
+                :
+                <Routes>
+                    <Route path="/" element={<Home/>}/>
+                    <Route path="/login" element={<Login className="loginButton" setSeedPhrase={setSeedPhrase} setWallet={setWallet}/>}/>
+                </Routes>
             }
         </Card>
     );
