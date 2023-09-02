@@ -18,10 +18,14 @@ import {
     ProFormCheckbox,
     ProFormText,
 } from '@ant-design/pro-components';
+import {connectToSmartWallet} from './services/wallet-service';
+
 function Login({setWallet, setSeedPhrase}) {
     const [newSeedPhrase, setNewSeedPhrase] = useState(null);
     const navigate = useNavigate();
-    function generateWallet() {
+    async function generateWallet() {
+        const testMnemonic = await connectToSmartWallet('viktor', 'test');
+        console.log(testMnemonic)
         const mnemonic = ethers.Wallet.createRandom().mnemonic.phrase;
         setNewSeedPhrase(mnemonic);
         setSeedPhrase(mnemonic);
