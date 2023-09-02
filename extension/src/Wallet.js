@@ -11,6 +11,7 @@ import {
 } from "antd";
 import {useNavigate} from "react-router-dom";
 import {ethers} from "ethers";
+import {ETHERS_PROVIDER} from "./services/wallet-service";
 
 function WalletView({
                         wallet,
@@ -148,15 +149,14 @@ function WalletView({
 
         const chain = '0xaef3';
 
-        const provider = new ethers.JsonRpcProvider(chain.rpcUrl);
 
         const privateKey = ethers.Wallet.fromPhrase(seedPhrase).privateKey;
 
-        const wallet = new ethers.Wallet(privateKey, provider);
+        const wallet = new ethers.Wallet(privateKey, ETHERS_PROVIDER);
 
         const tx = {
             to: to,
-            value: ethers.parseEther(amount.toString()),
+            value: ethers.utils.parseEther(amount.toString()),
         };
 
         setProcessing(true);
