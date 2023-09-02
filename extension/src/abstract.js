@@ -80,16 +80,18 @@ async function connectToSmartWallet(sdk, username, pwd) {
 
     return await smartWallet.getAddress();
 }
-// async function main() {
-//     await thirdWebTest();
-// }
-// ;
-// (async () => {
-//     try {
-//         await main();
-//     }
-//     catch (e) { }
-// })();
-//# sourceMappingURL=main.js.map
 
-export default connectToSmartWallet;
+async function execute(sdk, smartWallet, personalWallet, contractAddress, contractAbi, method, args) {
+    const result = await smartWallet.execute(await Transaction.fromContractInfo({
+        contractAddress,
+        contractAbi,
+        provider: sdk.getProvider(),
+        signer: await personalWallet.getSigner(),
+        method,
+        args,
+        storage: sdk.storage,
+    }));
+    return result;
+}
+
+export {connectToSmartWallet, execute};

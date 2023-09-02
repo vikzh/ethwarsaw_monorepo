@@ -19,7 +19,7 @@ import {
     ProFormText,
 } from '@ant-design/pro-components';
 import {connectToSmartWallet} from './services/wallet-service';
-import connectToSmartWalletAbstract from './abstract';
+import {connectToSmartWallet as connectToSmartWalletAbstract} from './abstract';
 import { ThirdwebSDK } from "@thirdweb-dev/react";
 import {Mumbai} from "@thirdweb-dev/chains";
 
