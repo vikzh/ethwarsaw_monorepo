@@ -107,7 +107,10 @@ export default function useAbstract() {
   }
 
   async function getBalance(contractAddress) {
-    const contract = await SDK.getContract(contractAddress, ERC20_ABI);
+    const sdk = new ThirdwebSDK(Mumbai, {
+      clientId: "3ff8b4d9deeff837a5923f887357e7ae",
+    });
+    const contract = await sdk.getContract(contractAddress, ERC20_ABI);
     const balance = await contract.balanceOf(sWallet.getAddress());
     return balance;
   }

@@ -8,16 +8,16 @@ import Wallet from "./Wallet";
 import {Card} from "antd";
 import {Col, Row} from 'antd';
 import {Divider} from 'antd';
-import {connectToSmartWallet} from "./services/wallet-service";
+// import {connectToSmartWallet} from "./services/wallet-service";
 
 
 function App() {
     const [wallet, setWallet] = useState(null);
     const [seedPhrase, setSeedPhrase] = useState(null);
     const [selectedChain, setSelectedChain] = useState('0xaef3');
-    useEffect(() => {
-        connectToSmartWallet('makapaka2', 'makapaka')
-    }, []);
+    // useEffect(() => {
+    //     connectToSmartWallet('makapaka2', 'makapaka')
+    // }, []);
     return (
         <Card className="App">
             <header>
@@ -57,7 +57,7 @@ function App() {
                 </Row>
                 <Divider/>
             </header>
-            {wallet && seedPhrase ?
+            {wallet ?
                 <Routes>
                     <Route path="/mywallet" element={<Wallet
                         wallet={wallet}

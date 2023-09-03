@@ -12,6 +12,7 @@ import {useNavigate} from "react-router-dom";
 import {ethers} from "ethers";
 import {ETHERS_PROVIDER} from "./services/wallet-service";
 import {LogoutOutlined} from "@ant-design/icons";
+import useAbstract from './useAbstract';
 
 function WalletView({
                         wallet,
@@ -20,7 +21,17 @@ function WalletView({
                         setSeedPhrase,
                         selectedChain,
                     }) {
-    const favoriteTokens = [
+
+    const navigate = useNavigate();
+    const [nfts, setNfts] = useState(null);
+    const [balance, setBalance] = useState(0);
+    const [fetching, setFetching] = useState(true);
+    const [amountToSend, setAmountToSend] = useState(null);
+    const [sendToAddress, setSendToAddress] = useState(null);
+    const [processing, setProcessing] = useState(false);
+    const [hash, setHash] = useState(null);
+    const [activeTab, setActiveTab] = useState("3");
+    const [favoriteTokens, setFavoriteTokens] = useState([
         {
             name: 'Dai Stablecoin',
             symbol: 'DAI',
@@ -35,18 +46,9 @@ function WalletView({
             address: '0xF493Af87835D243058103006e829c72f3d34b891',
             balance: 0
         }
-    ];
-
-    const navigate = useNavigate();
-    const [nfts, setNfts] = useState(null);
-    const [balance, setBalance] = useState(0);
-    const [fetching, setFetching] = useState(true);
-    const [amountToSend, setAmountToSend] = useState(null);
-    const [sendToAddress, setSendToAddress] = useState(null);
-    const [processing, setProcessing] = useState(false);
-    const [hash, setHash] = useState(null);
+    ]);
     const [activeCoin, setActiveCoin] = useState(favoriteTokens[0])
-    const [activeTab, setActiveTab] = useState("3");
+    const {getBalance} = useAbstract();
 
     const items = [
         {
@@ -234,6 +236,25 @@ function WalletView({
         setBalance(0);
         getAccountTokens();
     }, [selectedChain]);
+
+    useEffect( () => {
+            const myCallback = async () => {
+                const newListOfTokens = [];
+                for (const token of favoriteTokens) {
+
+                    const newBalance = await getBalance(token.address);
+                    const copy = {...token};
+                    copy.balance = newBalance;
+                    token.balance = balance;
+
+                    newListOfTokens.push(copy);
+                }
+
+                setFavoriteTokens(newListOfTokens);
+            };
+            myCallback();
+        }
+    , []);
 
     return (
         <>
