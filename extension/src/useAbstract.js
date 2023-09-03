@@ -107,7 +107,7 @@ export default function useAbstract() {
       clientId: "3ff8b4d9deeff837a5923f887357e7ae",
     });
     const contract = await sdk.getContract(contractAddress, ERC20_ABI);
-    const balance = await contract.balanceOf(sWallet.getAddress());
+    const balance = await contract.erc20.balanceOf(await sWallet.getAddress());
     return balance;
   }
 

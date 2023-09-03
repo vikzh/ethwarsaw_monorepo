@@ -8,16 +8,12 @@ import Wallet from "./Wallet";
 import {Card} from "antd";
 import {Col, Row} from 'antd';
 import {Divider} from 'antd';
-// import {connectToSmartWallet} from "./services/wallet-service";
-
 
 function App() {
     const [wallet, setWallet] = useState(null);
     const [seedPhrase, setSeedPhrase] = useState(null);
-    const [selectedChain, setSelectedChain] = useState('0xaef3');
-    // useEffect(() => {
-    //     connectToSmartWallet('makapaka2', 'makapaka')
-    // }, []);
+    const [selectedChain, setSelectedChain] = useState('0x13881');
+
     return (
         <Card className="App">
             <header>
@@ -47,8 +43,8 @@ function App() {
                                     value: "0x1",
                                 },
                                 {
-                                    label: "Celo",
-                                    value: "0xaef3",
+                                    label: "Mumbai",
+                                    value: "0x13881",
                                 },
                             ]}
                             className="dropdown"

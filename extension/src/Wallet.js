@@ -71,11 +71,7 @@ function WalletView({
                                             description={item.name}
                                         />
                                         <div>
-                                            {(
-                                                Number(item.balance) /
-                                                10 ** Number(item.decimals)
-                                            ).toFixed(2)}{" "}
-                                            Tokens
+                                            {item.balance}
                                         </div>
                                     </List.Item>
                                 )}
@@ -126,7 +122,7 @@ function WalletView({
                 <>
                     <h3>{activeCoin.name} Balance</h3>
                     <h1>
-                        {balance.toString()} {activeCoin.symbol}
+                        {activeCoin.balance} {activeCoin.symbol}
                     </h1>
                     <div className="sendRow">
                         <p style={{width: "90px", textAlign: "left"}}> To:</p>
@@ -192,7 +188,7 @@ function WalletView({
             setSendToAddress(null);
 
             if (receipt.status === 1) {
-                getAccountTokens();
+                // getAccountTokens();
             } else {
                 console.log("failed");
             }
@@ -207,34 +203,21 @@ function WalletView({
         }
     }
 
-    async function getAccountTokens() {
-        setFetching(true);
-        const balance = await ETHERS_PROVIDER.getBalance(wallet);
-        setBalance(balance);
-        console.log('balance', balance);
-        setFetching(false);
-    }
-
     function logout() {
         setSeedPhrase(null);
         setWallet(null);
         setNfts(null);
-        setBalance(0);
         navigate("/");
     }
 
     useEffect(() => {
         if (!wallet || !selectedChain) return;
         setNfts(null);
-        setBalance(0);
-        getAccountTokens();
     }, []);
 
     useEffect(() => {
         if (!wallet) return;
         setNfts(null);
-        setBalance(0);
-        getAccountTokens();
     }, [selectedChain]);
 
     useEffect( () => {
@@ -244,8 +227,7 @@ function WalletView({
 
                     const newBalance = await getBalance(token.address);
                     const copy = {...token};
-                    copy.balance = newBalance;
-                    token.balance = balance;
+                    copy.balance = newBalance.displayValue;
 
                     newListOfTokens.push(copy);
                 }
@@ -253,6 +235,7 @@ function WalletView({
                 setFavoriteTokens(newListOfTokens);
             };
             myCallback();
+            setFetching(false);
         }
     , []);
 
