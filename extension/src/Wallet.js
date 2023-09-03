@@ -31,6 +31,7 @@ function WalletView({
     const [processing, setProcessing] = useState(false);
     const [hash, setHash] = useState(null);
     const [activeTab, setActiveTab] = useState("3");
+    const [sending, setSending] = useState(false);
     const [favoriteTokens, setFavoriteTokens] = useState([
         {
             name: 'Dai Stablecoin',
@@ -48,7 +49,7 @@ function WalletView({
         }
     ]);
     const [activeCoin, setActiveCoin] = useState(favoriteTokens[0])
-    const {getBalance} = useAbstract();
+    const {getBalance, transfer} = useAbstract();
 
     const items = [
         {
@@ -64,7 +65,10 @@ function WalletView({
                                 dataSource={favoriteTokens}
                                 renderItem={(item, index) => (
                                     <List.Item
-                                        actions={[<a key="list-loadmore-edit" onClick={() => {setActiveCoin(favoriteTokens[index]);setActiveTab("1")}}>Send</a>]}
+                                        actions={[<a key="list-loadmore-edit" onClick={() => {
+                                            setActiveCoin(favoriteTokens[index]);
+                                            setActiveTab("1")
+                                        }}>Send</a>]}
                                         style={{textAlign: "left"}}>
                                         <List.Item.Meta
                                             title={item.symbol}
@@ -143,9 +147,13 @@ function WalletView({
                     <Button
                         style={{width: "100%", marginTop: "20px", marginBottom: "20px"}}
                         type="primary"
-                        onClick={() => sendTransaction(sendToAddress, amountToSend)}
+                        onClick={async () => {
+                            setSending(true);
+                            const tx = await transfer(activeCoin.address, sendToAddress, ethers.utils.parseEther(amountToSend));
+                            setSending(false);
+                        }}
                     >
-                        Send Tokens
+                        {sending ? "Sending..." : "Send Tokens"}
                     </Button>
                     {processing && (
                         <>
@@ -220,24 +228,49 @@ function WalletView({
         setNfts(null);
     }, [selectedChain]);
 
-    useEffect( () => {
+    useEffect(() => {
+        if (!sending) {
             const myCallback = async () => {
-                const newListOfTokens = [];
-                for (const token of favoriteTokens) {
+                    // const newListOfTokens = [];
+                    // for (const token of favoriteTokens) {
+                    //
+                    //     const newBalance = await getBalance(token.address);
+                    //     const copy = {...token};
+                    //     copy.balance = newBalance.displayValue;
+                    //
+                    //     newListOfTokens.push(copy);
+                    // }
 
-                    const newBalance = await getBalance(token.address);
-                    const copy = {...token};
-                    copy.balance = newBalance.displayValue;
-
-                    newListOfTokens.push(copy);
-                }
-
-                setFavoriteTokens(newListOfTokens);
-            };
-            myCallback();
-            setFetching(false);
+                    // setFavoriteTokens(newListOfTokens);
+                activeCoin.balance = (await getBalance(activeCoin.address)).displayValue;
+                setActiveCoin({...activeCoin});
+                };
+                myCallback();
+                setFetching(false);
         }
-    , []);
+        }
+        , [sending]);
+
+    useEffect(() => {
+                const myCallback = async () => {
+                    const newListOfTokens = [];
+                    for (const token of favoriteTokens) {
+
+                        const newBalance = await getBalance(token.address);
+                        const copy = {...token};
+                        copy.balance = newBalance.displayValue;
+
+                        newListOfTokens.push(copy);
+                    }
+
+                    setFavoriteTokens(newListOfTokens);
+                };
+                myCallback();
+                setFetching(false);
+        }
+        , [activeCoin]);
+
+
 
     return (
         <>
@@ -251,7 +284,8 @@ function WalletView({
                 {fetching ? (
                     <Spin/>
                 ) : (
-                    <Tabs defaultActiveKey="1" onTabClick={(key) => setActiveTab(key)} activeKey={activeTab} items={items} className="walletView"/>
+                    <Tabs defaultActiveKey="1" onTabClick={(key) => setActiveTab(key)} activeKey={activeTab}
+                          items={items} className="walletView"/>
                 )}
             </div>
         </>
