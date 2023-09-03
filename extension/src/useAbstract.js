@@ -1,7 +1,6 @@
 import { ACCOUNT_ABI, FACTORY_ABI, ERC20_ABI } from "./abi";
 import { LocalWallet, SmartWallet } from "@thirdweb-dev/wallets";
 import { Mumbai } from "@thirdweb-dev/chains";
-import { useState } from "react";
 import {
   ThirdwebSDK,
   Transaction,
@@ -9,14 +8,15 @@ import {
 } from "@thirdweb-dev/sdk";
 
 const FACTORY_ADDRESS = "0x8d05DE3858a4d3Fdca1aC41b80481339a47a1eba";
+const SDK = new ThirdwebSDK(Mumbai, {
+  clientId: "3ff8b4d9deeff837a5923f887357e7ae",
+});
+let sWallet;
+let pWallet;
 
 export default function useAbstract() {
-  const [SDK, setSDK] = useState(null);
-  const [sWallet, setSWallet] = useState(null);
-  const [pWallet, setPWallet] = useState(null);
-
-  async function getWalletAddressForUser(sdk, username) {
-    const factory = await sdk.getContract(FACTORY_ADDRESS, FACTORY_ABI);
+  async function getWalletAddressForUser(username) {
+    const factory = await SDK.getContract(FACTORY_ADDRESS, FACTORY_ABI);
     const smartWalletAddress = await factory.call("accountOfUsername", [
       username,
     ]);
@@ -34,21 +34,17 @@ export default function useAbstract() {
   }
 
   async function connectToSmartWallet(username, pwd) {
-    const sdk = new ThirdwebSDK(Mumbai, {
-      clientId: "3ff8b4d9deeff837a5923f887357e7ae",
-    });
-    setSDK(sdk);
-    const smartWalletAddress = await getWalletAddressForUser(sdk, username);
+    const smartWalletAddress = await getWalletAddressForUser(username);
     const isDeployed = await isContractDeployed(
       smartWalletAddress,
-      sdk.getProvider(),
+      SDK.getProvider(),
     );
     const smartWallet = createSmartWallet();
-    setSWallet(smartWallet);
+    sWallet = smartWallet;
     const personalWallet = new LocalWallet();
-    setPWallet(personalWallet);
+    pWallet = personalWallet;
     if (isDeployed) {
-      const contract = await sdk.getContract(smartWalletAddress);
+      const contract = await SDK.getContract(smartWalletAddress);
       const metadata = await contract.metadata.get();
       const encryptedWallet = metadata.encryptedWallet;
       if (!encryptedWallet) {
@@ -71,7 +67,7 @@ export default function useAbstract() {
       await smartWallet.connect({
         personalWallet,
       });
-      const encryptedWalletUri = await sdk.storage.upload({
+      const encryptedWalletUri = await SDK.storage.upload({
         name: username,
         encryptedWallet,
       });
@@ -79,11 +75,11 @@ export default function useAbstract() {
         await Transaction.fromContractInfo({
           contractAddress: await smartWallet.getAddress(),
           contractAbi: ACCOUNT_ABI,
-          provider: sdk.getProvider(),
+          provider: SDK.getProvider(),
           signer: await personalWallet.getSigner(),
           method: "register",
           args: [username, encryptedWalletUri],
-          storage: sdk.storage,
+          storage: SDK.storage,
         }),
       );
     }
